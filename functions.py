@@ -112,6 +112,23 @@ def monster_attacks(m_combat_strength, health_points):
         print("    |    The monster has reduced Player's health to: " + str(health_points))
     return health_points
 
+# FUNCTION: Random events on the map
+def trigger_random_event(hero):
+    events = [("treasure", +10), ("trap", -15), ("nothing", 0)]
+    active_events = [event for event in events if event[0] != "nothing"]
+    event = random.choice(events)
+    print(f"Event: {event[0]}")
+
+    if event[0] == "treasure":
+        hero.health_points += 10
+        print("You found a treasure! +10 HP")
+    elif event[0] == "trap":
+        damage = 4 if getattr(hero, 'has_armor', False) else 8
+        print(f"It's a trap! {'But you have armor. ' if getattr(hero, 'has_armor', False) else ''}-{damage} HP")
+        hero.health_points = max(1, hero.health_points - damage)
+    else:
+        print("Nothing happened.")
+
 # Recursion
 # You can choose to go crazy, but it will reduce your health points by 5
 def inception_dream(num_dream_lvls):

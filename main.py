@@ -3,6 +3,8 @@ import random
 import os
 import platform
 
+from functions import trigger_random_event
+
 # Print OS and Python version information
 print(f"Operating System: {os.name}")
 print(f"Python Version: {platform.python_version()}")
@@ -28,27 +30,6 @@ hero = Hero()
 # Create a monster instance
 monster = Monster()
 
-# FUNCTION: Random events on the map
-def trigger_random_event(hero):
-    events = [("treasure", +10), ("trap", -15), ("nothing", 0)]
-    active_events = [event for event in events if event[0] != "nothing"]
-
-    import random
-    event = random.choice(events)
-    print(f"Event: {event[0]}")
-
-    if event[0] == "treasure":
-        hero.health += 10
-        print("You found a treasure! +10 HP")
-    elif event[0] == "trap":
-        if hasattr(hero, 'has_armor') and hero.has_armor:
-            hero.health -= 5
-            print("It's a trap! But you have armor. -5 HP")
-        else:
-            hero.health -= 15
-            print("You fell into a trap! -15 HP")
-    else:
-        print("Nothing happened.")
 
 
 # Roll for weapon
@@ -148,6 +129,9 @@ power_roll = random.choice(["Fire Magic", "Freeze Time", "Super Hearing"])
 
 # Use the monster's power
 monster.use_power(power_roll)
+
+#FEATURE random events
+trigger_random_event(hero)
 
 # Lab Week 06 - Question 6
 num_dream_lvls = -1  # Initialize the number of dream levels
