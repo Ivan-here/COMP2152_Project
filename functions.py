@@ -1,4 +1,4 @@
-import random
+gitimport random
 import os
 
 def generate_weather():
