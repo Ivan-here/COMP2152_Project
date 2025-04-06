@@ -28,6 +28,29 @@ hero = Hero()
 # Create a monster instance
 monster = Monster()
 
+# FUNCTION: Random events on the map
+def trigger_random_event(hero):
+    events = [("treasure", +10), ("trap", -15), ("nothing", 0)]
+    active_events = [event for event in events if event[0] != "nothing"]
+
+    import random
+    event = random.choice(events)
+    print(f"Event: {event[0]}")
+
+    if event[0] == "treasure":
+        hero.health += 10
+        print("You found a treasure! +10 HP")
+    elif event[0] == "trap":
+        if hasattr(hero, 'has_armor') and hero.has_armor:
+            hero.health -= 5
+            print("It's a trap! But you have armor. -5 HP")
+        else:
+            hero.health -= 15
+            print("You fell into a trap! -15 HP")
+    else:
+        print("Nothing happened.")
+
+
 # Roll for weapon
 print("    |", end="    ")
 input("Roll the dice for your weapon (Press enter)")
@@ -230,27 +253,4 @@ if not input_invalid:
 
 
 
-# ФУНКЦИЯ: Случайные события на карте
-def trigger_random_event(hero):
-    events = [("treasure", +10), ("trap", -15), ("nothing", 0)]
-    active_events = [event for event in events if event[0] != "nothing"]
 
-    import random
-    event = random.choice(events)
-    print(f"Событие: {event[0]}")
-
-    if event[0] == "treasure":
-        hero.health += 10
-        print("Вы нашли сокровище! +10 HP")
-    elif event[0] == "trap":
-        if hasattr(hero, 'has_armor') and hero.has_armor:
-            hero.health -= 5
-            print("Ловушка! Но у вас есть броня. -5 HP")
-        else:
-            hero.health -= 15
-            print("Вы попали в ловушку! -15 HP")
-    else:
-        print("Ничего не произошло.")
-
-# Вызовем случайное событие
-trigger_random_event(hero)
