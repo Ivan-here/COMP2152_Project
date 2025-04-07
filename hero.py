@@ -4,19 +4,9 @@ import random
 from character import Character
 
 class Hero(Character):
-    """
-    Hero class representing the player character in the game.
-    Has combat strength and health points as properties.
-    """
     
     def __init__(self, name="Hero"):
-        """
-        Constructor for the Hero class.
-        Rolls dice to determine combat strength and health points.
-        
-        Args:
-            name (str): The name of the hero
-        """
+
         super().__init__(name)
         
         # Define dice options
@@ -32,15 +22,7 @@ class Hero(Character):
         print(f"Hero created with combat strength {self.combat_strength} and health points {self.health_points}")
     
     def hero_attacks(self, monster):
-        """
-        Method for the hero to attack a monster.
-        
-        Args:
-            monster: The monster object to attack
-            
-        Returns:
-            int: The monster's updated health points after the attack
-        """
+
         ascii_image = """
                                 @@   @@ 
                                 @    @  
@@ -76,10 +58,6 @@ class Hero(Character):
         return monster.health_points
     
     def __del__(self):
-        """
-        Destructor for the Hero class.
-        Prints a message when the object is being destroyed.
-        """
         super().__del__()
         print("The Hero object is being destroyed by the garbage collector")
 
