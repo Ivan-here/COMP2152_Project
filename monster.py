@@ -1,75 +1,27 @@
-
-# Import the random library for dice rolling
 import random
 from character import Character
 
 class Monster(Character):
-
-    
     def __init__(self):
-        super().__init__(combat_strength=range(1, 7), health_points=range(1, 21))
-        
-        # Define dice options
-        small_dice_options = list(range(1, 7))  # 1-6
-        big_dice_options = list(range(1, 21))   # 1-20
-        
-        # Roll for combat strength (1-6)
-        self.combat_strength = random.choice(small_dice_options)
-        
-        # Roll for health points (1-20)
-        self.health_points = random.choice(big_dice_options)
-        
-        # Monster powers
+        super().__init__()  # no arguments needed anymore
+
         self._powers = {
             "Fire Magic": 2,
             "Freeze Time": 4,
             "Super Hearing": 6
         }
-        
-        print(f"Monster created with combat strength {self.combat_strength} and health points {self.health_points}")
-    
+
+        print(f"Monster created with combat strength {self.combat_strength}, "
+              f"health points {self.health_points}, and element {self.element}")
+
     @property
     def powers(self):
-        """Getter for powers property"""
         return self._powers
-    
+
     @powers.setter
     def powers(self, value):
-        """Setter for powers property"""
         self._powers = value
-    
-    def monster_attacks(self, hero):
 
-        ascii_image = """                                                                 
-           @@@@ @                           
-      (     @*&@  ,                         
-    @               %                       
-     &#(@(@%@@@@@*   /                      
-      @@@@@.                                
-               @       /                    
-                %         @                 
-            ,(@(*/           %              
-               @ (  .@#                 @   
-                          @           .@@. @
-                   @         ,              
-                      @       @ .@          
-                             @              
-                          *(*  *      
-             """
-        print(ascii_image)
-        print(f"    |    Monster's Claw ({self.combat_strength}) ---> Player ({hero.health_points})")
-        
-        if self.combat_strength >= hero.health_points:
-            # Monster was strong enough to kill player in one blow
-            hero.health_points = 0
-            print("    |    Player is dead")
-        else:
-            # Monster only damaged the player
-            hero.health_points -= self.combat_strength
-            print(f"    |    The monster has reduced Player's health to: {hero.health_points}")
-            
-        return hero.health_points
-    
     def use_power(self, power_name):
         if power_name in self.powers:
             power_value = self.powers[power_name]
@@ -79,12 +31,52 @@ class Monster(Character):
         else:
             print(f"    |    The monster doesn't have the power: {power_name}")
             return 0
-    
-    def __del__(self):
 
+    def monster_attacks(self, hero, element_advantage):
+        ascii_image2 = """                                                                 
+               @@@@ @                           
+          (     @*&@  ,                         
+        @               %                       
+         &#(@(@%@@@@@*   /                      
+          @@@@@.                                
+                   @       /                    
+                    %         @                 
+                ,(@(*/           %              
+                   @ (  .@#                 @   
+                              @           .@@. @
+                       @         ,              
+                          @       @ .@          
+                                 @              
+                              *(*  *      
+        """
+        print(ascii_image2)
+        print(f"    |    Monster's Claw ({self.combat_strength}) ---> Hero ({hero.health_points})")
+
+        damage = self.combat_strength
+
+        # Elemental brawl
+        if element_advantage.get(self.element) == hero.element:
+            bonus = random.randint(1, 6)
+            damage += bonus
+            advantage_summary = f"    |    Elemental advantage! {self.element} > {hero.element}, +{bonus} bonus damage!"
+        elif element_advantage.get(hero.element) == self.element:
+            penalty = random.randint(1, 3)
+            damage = max(1, damage - penalty)
+            advantage_summary = f"    |    Elemental disadvantage! {hero.element} > {self.element}, -{penalty} damage!"
+        else:
+            advantage_summary = "    |    No elemental advantage this round."
+
+        print(advantage_summary)
+        print(f"    |    Monster's damage this round: {damage}")
+
+        if damage >= hero.health_points:
+            hero.health_points = 0
+            print("    |    Hero is dead")
+        else:
+            hero.health_points -= damage
+            print(f"    |    The monster has reduced Hero's health to: {hero.health_points}")
+
+        return hero.health_points
+
+    def __del__(self):
         super().__del__()
-        print("The Monster object is being destroyed by the garbage collector")
-
-    def __del__(self):
-        print("The Monster object is being destroyed by the garbage collector")
-

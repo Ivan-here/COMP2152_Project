@@ -245,3 +245,17 @@ def load_monster_kills():
         print(f"Error loading monster kills: {e}. Assuming 0 kills.")
         return 0
 
+#Elemental Brawl
+def elemental_advantage():
+    elements = ["Fire", "Water", "Earth", "Air"]
+    #copying 2, shuffling both of them for a full chaos
+    first = elements.copy()
+    second = elements.copy()
+    while True:
+        random.shuffle(first)
+        random.shuffle(second)
+        #No elements are assigned to itself
+        if all(a != b for a, b in zip(first, second)):
+            break
+    return dict(zip(first, second))
+

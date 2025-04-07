@@ -1332,3 +1332,6 @@ Total monsters killed: 1
 Monster has killed the hero previously
 Total monsters killed: 0
 Hero sas has killed a monster and gained 3 stars.
+Monster defeated the hero.
+Hero asa defeated a monster and gained 3 stars.
+Hero qwq defeated a monster and gained 3 stars.

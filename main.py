@@ -157,7 +157,6 @@ while num_dream_lvls < 0 or num_dream_lvls > 3:
             print(f"health points: {hero.health_points}")
 
         break
-
     except ValueError:
         print("Invalid input. Please enter a number between 0 and 3.")
         continue
@@ -167,10 +166,18 @@ while num_dream_lvls < 0 or num_dream_lvls > 3:
 # Loop while the monster and the player are alive. Call fight sequence functions
 print("    ------------------------------------------------------------------")
 print("    |    You meet the monster. FIGHT!!")
+print(f"    |    Hero's element: {hero.element}")
+print(f"    |    Monster's element: {monster.element}")
 current_weather = weather.get_weather()
 weather.apply_weather_effects(hero,monster,current_weather)
 while monster.health_points > 0 and hero.health_points > 0:
     # Fight Sequence
+    # Elemental Brawl
+    element_advantage = functions.elemental_advantage()
+    print("    ------------------------------------------------------------------")
+    print("    |    Elemental Advantage Table (This Round):")
+    for k, v in element_advantage.items():
+        print(f"    |      {k} > {v}")
     print("    |", end="    ")
 
     # Lab 5: Question 5:
@@ -179,14 +186,14 @@ while monster.health_points > 0 and hero.health_points > 0:
     if not (attack_roll % 2 == 0):
         print("    |", end="    ")
         input("You strike (Press enter)")
-        hero.hero_attacks(monster)
+        hero.hero_attacks(monster, element_advantage)
         if monster.health_points == 0:
             num_stars = 3
         else:
             print("    |", end="    ")
             print("------------------------------------------------------------------")
             input("    |    The monster strikes (Press enter)!!!")
-            monster.monster_attacks(hero)
+            monster.monster_attacks(hero, element_advantage)
             if hero.health_points == 0:
                 num_stars = 1
             else:
@@ -194,14 +201,14 @@ while monster.health_points > 0 and hero.health_points > 0:
     else:
         print("    |", end="    ")
         input("The Monster strikes (Press enter)")
-        monster.monster_attacks(hero)
+        monster.monster_attacks(hero, element_advantage)
         if hero.health_points == 0:
             num_stars = 1
         else:
             print("    |", end="    ")
             print("------------------------------------------------------------------")
             input("The hero strikes!! (Press enter)")
-            hero.hero_attacks(monster)
+            hero.hero_attacks(monster, element_advantage)
             if monster.health_points == 0:
                 num_stars = 3
             else:
