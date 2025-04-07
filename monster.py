@@ -4,20 +4,10 @@ import random
 from character import Character
 
 class Monster(Character):
-    """
-    Monster class representing the enemy in the game.
-    Inherits from the Character class.
-    """
+
     
-    def __init__(self, name="Monster"):
-        """
-        Constructor for the Monster class.
-        Rolls dice to determine combat strength and health points.
-        
-        Args:
-            name (str): The name of the monster
-        """
-        super().__init__(name)
+    def __init__(self):
+        super().__init__(combat_strength=range(1, 7), health_points=range(1, 21))
         
         # Define dice options
         small_dice_options = list(range(1, 7))  # 1-6
@@ -49,15 +39,7 @@ class Monster(Character):
         self._powers = value
     
     def monster_attacks(self, hero):
-        """
-        Method for the monster to attack a hero.
-        
-        Args:
-            hero: The hero object to attack
-            
-        Returns:
-            int: The hero's updated health points after the attack
-        """
+
         ascii_image = """                                                                 
            @@@@ @                           
       (     @*&@  ,                         
@@ -89,15 +71,6 @@ class Monster(Character):
         return hero.health_points
     
     def use_power(self, power_name):
-        """
-        Use a monster power to increase combat strength.
-        
-        Args:
-            power_name (str): The name of the power to use
-            
-        Returns:
-            int: The power value added to combat strength
-        """
         if power_name in self.powers:
             power_value = self.powers[power_name]
             self.combat_strength = min(6, self.combat_strength + power_value)
@@ -108,43 +81,9 @@ class Monster(Character):
             return 0
     
     def __del__(self):
-        """
-        Destructor for the Monster class.
-        Prints a message when the object is being destroyed.
-        """
+
         super().__del__()
         print("The Monster object is being destroyed by the garbage collector")
-
-# Example usage:
-if __name__ == "__main__":
-    # Instantiate a monster object
-    monster = Monster()
-    
-    # Create a mock hero for testing
-    from hero import Hero
-    hero = Hero()
-    
-    # Test the monster_attacks method
-    monster.monster_attacks(hero)
-    print(f"Hero health after attack: {hero.health_points}")
-    
-    # Test the use_power method
-    monster.use_power("Fire Magic")
-
-from character import Character
-
-class Monster(Character):
-    def __init__(self):
-        super().__init__()
-
-    def monster_attacks(self, hero):
-        print(f"Monster attacks with strength {self.combat_strength}!")
-        if self.combat_strength >= hero.health_points:
-            hero.health_points = 0
-            print("Monster has killed the hero!")
-        else:
-            hero.health_points -= self.combat_strength
-            print(f"Hero's health reduced to {hero.health_points}")
 
     def __del__(self):
         print("The Monster object is being destroyed by the garbage collector")

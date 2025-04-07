@@ -133,26 +133,18 @@ def trigger_random_event(hero):
 # Recursion
 # You can choose to go crazy, but it will reduce your health points by 5
 def inception_dream(num_dream_lvls):
-    num_dream_lvls = int(num_dream_lvls)
-    # Base Case
+    if not isinstance(num_dream_lvls, int) or num_dream_lvls < 1:
+        print("    |    Invalid number of dream levels. Must be >= 1.")
+        return 0
+
     if num_dream_lvls == 1:
         print("    |    You are in the deepest dream level now")
         print("    |", end="    ")
         input("Start to go back to real life? (Press Enter)")
         print("    |    You start to regress back through your dreams to real life.")
         return 2
-
-    # Recursive Case
     else:
-        # inception_dream(5)
-        # 1 + inception_dream(4)
-        # 1 + 1 + inception_dream(3)
-        # 1 + 1 + 1 + inception_dream(2)
-        # 1 + 1 + 1 + 1 + inception_dream(1)
-        # 1 + 1 + 1 + 1 + 2
-        return 1 + int(inception_dream(num_dream_lvls - 1))
-
-
+        return 1 + inception_dream(num_dream_lvls - 1)
 # Lab 06 - Question 3 and 4
 def save_game(winner, hero_name="", num_stars=0):
     with open("save.txt", "a") as file:

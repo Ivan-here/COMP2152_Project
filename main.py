@@ -12,7 +12,8 @@ print(f"Python Version: {platform.python_version()}")
 # Import our custom classes
 from hero import Hero
 from monster import Monster
-import functions_lab06_solution as functions
+import functions
+import weather
 
 # Define the Weapons
 weapons = ["Fist", "Knife", "Club", "Gun", "Bomb", "Nuclear Bomb"]
@@ -24,10 +25,8 @@ belt = []
 # Define the number of stars to award the player
 num_stars = 0
 
-# Create a hero instance
 hero = Hero()
 
-# Create a monster instance
 monster = Monster()
 
 
@@ -95,7 +94,7 @@ belt.sort()
 print("    |    Your belt: ", belt)
 
 # Use Loot
-belt, hero.health_points = functions.use_loot(belt, hero.health_points)
+belt = functions.use_loot(belt, hero)
 
 print("    ------------------------------------------------------------------")
 print("    |", end="    ")
@@ -132,40 +131,44 @@ monster.use_power(power_roll)
 
 #FEATURE random events
 trigger_random_event(hero)
-
 # Lab Week 06 - Question 6
 num_dream_lvls = -1  # Initialize the number of dream levels
-while (num_dream_lvls < 0 or num_dream_lvls > 3):
-    # Call Recursive function
-    print("    |", end="    ")
+
+while num_dream_lvls < 0 or num_dream_lvls > 3:
     try:
-        num_dream_lvls = input("How many dream levels do you want to go down? (Enter a number 0-3)")
-        # If the value entered was not an integer, set the number of dream levels to -1 and loop again 
-        if ((num_dream_lvls == "")):
-            num_dream_lvls = -1
+        print("    |", end="    ")
+        input_val = input("How many dream levels do you want to go down? (Enter a number 0-3): ")
+
+        if input_val.strip() == "":
             print("Number entered must be a whole number between 0-3 inclusive, try again")
-        else:
-            num_dream_lvls = int(num_dream_lvls)
+            continue
 
-            if ((num_dream_lvls < 0) or (num_dream_lvls > 3)):
-                num_dream_lvls = -1
-                print("Number entered must be a whole number between 0-3 inclusive, try again")
-            elif (not num_dream_lvls == 0):
-                hero.health_points -= 1
-                crazy_level = functions.inception_dream(num_dream_lvls)
-                hero.combat_strength += crazy_level
-                print(f"combat strength: {hero.combat_strength}")
-                print(f"health points: {hero.health_points}")
+        num_dream_lvls = int(input_val)
+
+        if num_dream_lvls < 0 or num_dream_lvls > 3:
+            print("Number entered must be a whole number between 0-3 inclusive, try again")
+            continue
+
+        if num_dream_lvls != 0:
+            hero.health_points -= 1
+            crazy_level = functions.inception_dream(num_dream_lvls)
+            hero.combat_strength += crazy_level
+            print(f"combat strength: {hero.combat_strength}")
+            print(f"health points: {hero.health_points}")
+
+        break
+
     except ValueError:
-        num_dream_lvls = -1
-        print("Invalid input. Please enter a number between 0-3.")
-    
-    print("num_dream_lvls: ", num_dream_lvls)
+        print("Invalid input. Please enter a number between 0 and 3.")
+        continue
 
+    print(f"num_dream_lvls {num_dream_lvls}")
 # Fight Sequence
 # Loop while the monster and the player are alive. Call fight sequence functions
 print("    ------------------------------------------------------------------")
 print("    |    You meet the monster. FIGHT!!")
+current_weather = weather.get_weather()
+weather.apply_weather_effects(hero,monster,current_weather)
 while monster.health_points > 0 and hero.health_points > 0:
     # Fight Sequence
     print("    |", end="    ")
