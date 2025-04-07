@@ -1,15 +1,19 @@
-# Import the random library to use for the dice later
+#!/usr/bin/env python
 import random
 import os
 import platform
 
-from functions import trigger_random_event
-
-# Print OS and Python version information
+# --- Local Branch Addition: Print OS, Python version, and total monsters killed ---
 print(f"Operating System: {os.name}")
 print(f"Python Version: {platform.python_version()}")
 
-# Import our custom classes
+import functions
+# Display total monsters killed across games (local branch addition)
+monster_kills = functions.load_monster_kills()
+print(f"Total Monsters Killed Across Games: {monster_kills}")
+
+# --- Main Branch Imports ---
+from functions import trigger_random_event
 from hero import Hero
 from monster import Monster
 import functions
@@ -25,13 +29,44 @@ belt = []
 # Define the number of stars to award the player
 num_stars = 0
 
-hero = Hero()
+# --- Local Branch Addition: Input Validation for Combat Strengths ---
+i = 0
+input_invalid = True
+while input_invalid and i < 5:
+    print("------------------------------------------------------------------")
+    hero_combat_input = input("Enter your combat Strength (1-6): ")
+    monster_combat_input = input("Enter the monster's combat Strength (1-6): ")
 
+    if not hero_combat_input.isnumeric() or not monster_combat_input.isnumeric():
+        print("Invalid input. Enter numbers between 1 and 6.")
+        i += 1
+        continue
+    elif int(hero_combat_input) not in range(1, 7) or int(monster_combat_input) not in range(1, 7):
+        print("Enter a valid integer between 1 and 6.")
+        i += 1
+        continue
+    else:
+        input_invalid = False
+        hero_combat = int(hero_combat_input)
+        monster_combat = int(monster_combat_input)
+
+# --- Initialize Hero and Monster Objects ---
+hero = Hero()
 monster = Monster()
 
+# Assign combat strengths based on user input (local branch addition)
+hero.combat_strength = hero_combat
+monster.combat_strength = monster_combat
 
+# Display initial stats
+print(f"Hero starts with {hero.health_points} HP and {hero.combat_strength} combat strength.")
+print(f"Monster starts with {monster.health_points} HP and {monster.combat_strength} combat strength.")
+print(f"Monster stage: {monster.stage}")  # local branch bonus
 
-# Roll for weapon
+# Monster evolution: check for evolution before the fight starts
+monster.check_evolution()
+
+# --- Main Branch: Roll for Weapon ---
 print("    |", end="    ")
 input("Roll the dice for your weapon (Press enter)")
 ascii_image5 = """
@@ -46,19 +81,19 @@ ascii_image5 = """
            /     # @   *              
                ,     %                
           @&@           @&@
-          """
+"""
 print(ascii_image5)
 small_dice_options = list(range(1, 7))
 weapon_roll = random.choice(small_dice_options)
 
-# Limit the combat strength to 6
-hero.combat_strength = min(6, (hero.combat_strength + weapon_roll))
+# Limit the combat strength to 6 after adding the dice roll
+hero.combat_strength = min(6, hero.combat_strength + weapon_roll)
 print(f"    |    The hero's weapon is {weapons[weapon_roll - 1]}")
 
-# Lab 06 - Question 5b
+# Lab 06 - Question 5b: Adjust combat strength based on previous game results
 functions.adjust_combat_strength(hero.combat_strength, monster.combat_strength)
 
-# Weapon Roll Analysis
+# --- Weapon Roll Analysis ---
 print("    ------------------------------------------------------------------")
 print("    |", end="    ")
 input("Analyze the Weapon roll (Press enter)")
@@ -70,30 +105,27 @@ elif weapon_roll <= 4:
 else:
     print("--- Nice weapon, friend!")
 
-# If the weapon rolled is not a Fist, print out "Thank goodness you didn't roll the Fist..."
+# If the weapon rolled is not a Fist, print a message
 if weapons[weapon_roll - 1] != "Fist":
     print("    |    --- Thank goodness you didn't roll the Fist...")
 
-# Collect Loot
+# --- Collect Loot ---
 print("    ------------------------------------------------------------------")
 print("    |    !!You find a loot bag!! You look inside to find 2 items:")
 print("    |", end="    ")
 input("Roll for first item (enter)")
-
 # Collect Loot First time
 loot_options, belt = functions.collect_loot(loot_options, belt)
 print("    ------------------------------------------------------------------")
 print("    |", end="    ")
 input("Roll for second item (Press enter)")
-
 # Collect Loot Second time
 loot_options, belt = functions.collect_loot(loot_options, belt)
-
 print("    |    You're super neat, so you organize your belt alphabetically:")
 belt.sort()
 print("    |    Your belt: ", belt)
 
-# Use Loot
+# --- Use Loot ---
 belt = functions.use_loot(belt, hero)
 
 print("    ------------------------------------------------------------------")
@@ -101,11 +133,10 @@ print("    |", end="    ")
 input("Analyze the roll (Press enter)")
 # Compare Player vs Monster's strength
 print(f"    |    --- You are matched in strength: {hero.combat_strength == monster.combat_strength}")
-
 # Check the Player's overall strength and health
 print(f"    |    --- You have a strong player: {(hero.combat_strength + hero.health_points) >= 15}")
 
-# Roll for the monster's power
+# --- Roll for the Monster's Magic Power ---
 print("    |", end="    ")
 input("Roll for Monster's Magic Power (Press enter)")
 ascii_image4 = """
@@ -113,7 +144,6 @@ ascii_image4 = """
      @     @                        
          &                          
   @      .                          
-
  @       @                    @     
           @                  @      
   @         @              @  @     
@@ -121,69 +151,56 @@ ascii_image4 = """
      @                     @        
         @               @           
              @@@@@@@                
-
-                                  """
+"""
 print(ascii_image4)
 power_roll = random.choice(["Fire Magic", "Freeze Time", "Super Hearing"])
-
-# Use the monster's power
+# Use the Monster's power
 monster.use_power(power_roll)
 
-#FEATURE random events
+# --- Trigger Random Events ---
 trigger_random_event(hero)
-# Lab Week 06 - Question 6
-num_dream_lvls = -1  # Initialize the number of dream levels
 
+# --- Inception Dream (Lab Week 06 - Question 6) ---
+num_dream_lvls = -1  # Initialize the number of dream levels
 while num_dream_lvls < 0 or num_dream_lvls > 3:
     try:
         print("    |", end="    ")
         input_val = input("How many dream levels do you want to go down? (Enter a number 0-3): ")
-
         if input_val.strip() == "":
             print("Number entered must be a whole number between 0-3 inclusive, try again")
             continue
-
         num_dream_lvls = int(input_val)
-
         if num_dream_lvls < 0 or num_dream_lvls > 3:
             print("Number entered must be a whole number between 0-3 inclusive, try again")
             continue
-
         if num_dream_lvls != 0:
             hero.health_points -= 1
             crazy_level = functions.inception_dream(num_dream_lvls)
             hero.combat_strength += crazy_level
             print(f"combat strength: {hero.combat_strength}")
             print(f"health points: {hero.health_points}")
-
         break
     except ValueError:
         print("Invalid input. Please enter a number between 0 and 3.")
         continue
 
-    print(f"num_dream_lvls {num_dream_lvls}")
-# Fight Sequence
-# Loop while the monster and the player are alive. Call fight sequence functions
+# --- Fight Sequence with Elemental Advantage and Weather Effects ---
 print("    ------------------------------------------------------------------")
 print("    |    You meet the monster. FIGHT!!")
 print(f"    |    Hero's element: {hero.element}")
 print(f"    |    Monster's element: {monster.element}")
 current_weather = weather.get_weather()
-weather.apply_weather_effects(hero,monster,current_weather)
+weather.apply_weather_effects(hero, monster, current_weather)
 while monster.health_points > 0 and hero.health_points > 0:
-    # Fight Sequence
-    # Elemental Brawl
     element_advantage = functions.elemental_advantage()
     print("    ------------------------------------------------------------------")
     print("    |    Elemental Advantage Table (This Round):")
     for k, v in element_advantage.items():
         print(f"    |      {k} > {v}")
     print("    |", end="    ")
-
-    # Lab 5: Question 5:
     input("Roll to see who strikes first (Press Enter)")
     attack_roll = random.choice(small_dice_options)
-    if not (attack_roll % 2 == 0):
+    if attack_roll % 2 != 0:
         print("    |", end="    ")
         input("You strike (Press enter)")
         hero.hero_attacks(monster, element_advantage)
@@ -214,37 +231,37 @@ while monster.health_points > 0 and hero.health_points > 0:
             else:
                 num_stars = 2
 
-if(monster.health_points <= 0):
+# --- Determine Winner and Save Outcome ---
+if monster.health_points <= 0:
     winner = "Hero"
 else:
     winner = "Monster"
 
-# Final Score Display
+# Final Score Display and Hero Name Input
 tries = 0
 input_invalid = True
-while input_invalid and tries in range(5):
+while input_invalid and tries < 5:
     print("    |", end="    ")
-
-    hero_name = input("Enter your Hero's name (in two words)")
-    name = hero_name.split()
-    if len(name) != 2:
+    hero_name = input("Enter your Hero's name (in two words): ")
+    name_parts = hero_name.split()
+    if len(name_parts) != 2:
         print("    |    Please enter a name with two parts (separated by a space)")
         tries += 1
     else:
-        if not name[0].isalpha() or not name[1].isalpha():
+        if not name_parts[0].isalpha() or not name_parts[1].isalpha():
             print("    |    Please enter an alphabetical name")
             tries += 1
         else:
-            short_name = name[0][0:2:1] + name[1][0:1:1]
+            short_name = name_parts[0][:2] + name_parts[1][:1]
             print(f"    |    I'm going to call you {short_name} for short")
             input_invalid = False
 
 if not input_invalid:
     stars_display = "*" * num_stars
     print(f"    |    Hero {short_name} gets <{stars_display}> stars")
-
     functions.save_game(winner, hero_name=short_name, num_stars=num_stars)
 
-
-
-
+# --- Local Branch Addition: Update Monster Kills ---
+monster_kills += 1
+with open("monster_kills.txt", "w") as file:
+    file.write(str(monster_kills))
