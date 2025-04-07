@@ -133,6 +133,7 @@ class Monster(Character):
             if damage >= hero.health_points:
                 hero.health_points = 0
                 print("    |    Hero is dead")
+                self.increase_wins()
             else:
                 hero.health_points -= damage
                 print(f"    |    The monster has reduced Hero's health to: {hero.health_points}")

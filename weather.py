@@ -16,8 +16,12 @@ def apply_weather_effects(hero, monster, weather):
     elif weather == "Windy":
         print("It's windy! The battle might be unpredictable.")
     elif weather == "Snowy":
-        hero.health_points = max(0, hero.health_points - 1)
-        monster.health_points = max(0, monster.health_points - 1)
-        print("It's snowy! Both combatants lose a bit of health due to the cold.")
+        if hero.health_points == 1:
+            monster.health_points = max(0, monster.health_points - 1)
+            print("It's snowy! Both combatants lose a bit of health due to the cold.")
+        else:
+            hero.health_points = max(0, hero.health_points - 1)
+            monster.health_points = max(0, monster.health_points - 1)
+            print("It's snowy! Both combatants lose a bit of health due to the cold.")
     else:
         print("The weather is perfect for battle!")
